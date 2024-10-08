@@ -15,9 +15,11 @@ def individual_process(change_list, to_search, replace_original):
 
     # Run it as many times as needed
     for line in original.readlines():
+        # print("Now Changing: " + line)
         for c in change_list.keys():
+            # print("Currently changing: " + c + " -> " + change_list.get(c))
             pattern = re.compile(c)
-            line = re.sub(pattern, change_list[c], line)
+            line = re.sub(pattern, change_list.get(c), line)
         changed_file.write(line)
 
     # Tie up the streams and replace the original file
