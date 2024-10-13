@@ -8,16 +8,13 @@ from argparse import ArgumentParser
 def process_file(args, change_list, to_process):
     original = open(to_process, 'r')
 
-    if args.make | args.replace:
-        write = True
-
-    if write:
+    if args.Make | args.Replace:
         suffix = Path(to_process).suffix
         to_write = to_process.replace(suffix, (' -Changed' + suffix))
         changed_file = open(to_write, 'w')
 
         # Run it as many times as needed
-        for line in to_process.readlines():
+        for line in original.readlines():
             changed_file.write(make_changes(args, change_list, line))
 
         # Tie up the streams and replace the original file
@@ -27,7 +24,7 @@ def process_file(args, change_list, to_process):
             os.rename(to_write, to_process)
 
     else:
-        for line in to_process.readlines():
+        for line in original.readlines():
             print(make_changes(args, change_list, line))
 
     original.close()
@@ -41,7 +38,7 @@ def make_changes(args, change_list, line):
 
     for c in change_list.keys():
         pattern = re.compile(c)
-        line = re.sub(pattern, change_list.get(c), changed)
+        changed = re.sub(pattern, change_list.get(c), changed)
 
     return changed
 
@@ -122,9 +119,9 @@ def setup_parser():
                         help='A change to be applied, entered as: "target:replacement"')
     parser.add_argument('-l', '--LowerCase', action='store_true',
                         help='Set all text to lower case before applying changes.')
-    parser.add_argument('-r', '--Recursive', action='store_const',
+    parser.add_argument('-z', '--Recursive', action='append',
                         help='Input a specific path to start a recursive process in. Default = .txt only.')
-    parser.add_argument('-a', '--All', action='store_const',
+    parser.add_argument('-a', '--All', action='append',
                         help='Input a specific directory to process all files in. Default = .txt only')
     parser.add_argument('-t', '--Type', action='append',
                         help='Add a file type to scan when processing directories with -a or -r.')
@@ -192,10 +189,12 @@ def main() -> int:
         to_scan += args.Type
 
     if args.All is not None:
-        process_dir(args.All, to_scan)
+        for path in args.All:
+            process_dir(args.All, to_scan)
 
     if args.Recursive is not None:
-        recursive_process(args.Recursive, to_scan)
+        for path in args.Recursive:
+            recursive_process(path, to_scan)
 
     if args.String is not None:
         for s in args.String:
