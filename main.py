@@ -38,6 +38,7 @@ def make_changes(args, change_list, line):
         changed = line.lower()
 
     for c in change_list.keys():
+        # print("Current Change: " + c)
         pattern = re.compile(c)
         changed = re.sub(pattern, change_list.get(c), changed)
 
