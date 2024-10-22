@@ -33,12 +33,30 @@ def process_file(args, change_list, to_process):
 
 def make_changes(args, change_list, line):
     changed = line
+
     if args.LowerCase:
         changed = line.lower()
 
     for c in change_list.keys():
         pattern = re.compile(c)
         changed = re.sub(pattern, change_list.get(c), changed)
+
+    if args.ReverseWords:
+        words = changed.split(" ")
+        for w in words:
+            w[::-1]
+        changed = " "
+        changed.join(words)
+
+    if args.ReverseSentence:
+        words = changed.split(" ")
+        words.reverse()
+        changed = " "
+        changed.join(words)
+
+    if args.ReverseLine:
+        changed = changed[::-1]
+
 
     return changed
 
@@ -94,7 +112,7 @@ def setup_parser():
                 -l = set the text to lower case before applying changes.
                 Set the path to start the recursive process in. Defaults to current working directory.
                 -a = All files, repeat replacement for all files in cwd
-                -s = All subdirectories, repeat for all files in subdirectories
+                -s = string to process
 
     """
     parser = ArgumentParser(description='Find matches of a pattern in ' \
@@ -125,6 +143,12 @@ def setup_parser():
                         help='Input a specific directory to process all files in. Default = .txt only')
     parser.add_argument('-t', '--Type', action='append',
                         help='Add a file type to scan when processing directories with -a or -r.')
+    parser.add_argument('-rw', '--ReverseWords', action='store_true',
+                        help='Reverse the spelling of the individual words of the lines.')
+    parser.add_argument('-rs', '--ReverseSentence', action='store_true',
+                        help='Reverse the order of the words in a line.')
+    parser.add_argument('-rl', '--ReverseLine', action='store_true',
+                        help='Completely reverse the characters of the lines.')
     return parser
 
 
@@ -190,15 +214,19 @@ def main() -> int:
 
     if args.All is not None:
         for path in args.All:
-            process_dir(args.All, to_scan)
+            process_dir(path, to_scan)
 
     if args.Recursive is not None:
         for path in args.Recursive:
             recursive_process(path, to_scan)
 
     if args.String is not None:
+        # print("changes:\n")
+        # for k in change_list.keys():
+        #     print(k + " : " + change_list.get(k))
         for s in args.String:
             changed = make_changes(args, change_list, s)
+
             print(s + " -> \n" + changed + "\n")
 
     if args.File is not None:
