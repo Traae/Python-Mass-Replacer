@@ -137,10 +137,10 @@ def setup_parser():
                         help='A change to be applied, entered as: "target:replacement"')
     parser.add_argument('-l', '--LowerCase', action='store_true',
                         help='Set all text to lower case before applying changes.')
-    parser.add_argument('-z', '--Recursive', action='append',
-                        help='Input a specific path to start a recursive process in. Default = .txt only.')
-    parser.add_argument('-a', '--All', action='append',
-                        help='Input a specific directory to process all files in. Default = .txt only')
+    # parser.add_argument('-z', '--Recursive', action='append',
+    #                     help='Input a specific path to start a recursive process in. Default = .txt only.')
+    # parser.add_argument('-a', '--All', action='append',
+    #                     help='Input a specific directory to process all files in. Default = .txt only')
     parser.add_argument('-t', '--Type', action='append',
                         help='Add a file type to scan when processing directories with -a or -r.')
     parser.add_argument('-rw', '--ReverseWords', action='store_true',
@@ -212,13 +212,13 @@ def main() -> int:
     if args.Type is not None:
         to_scan += args.Type
 
-    if args.All is not None:
-        for path in args.All:
-            process_dir(path, to_scan)
-
-    if args.Recursive is not None:
-        for path in args.Recursive:
-            recursive_process(path, to_scan)
+    # if args.All is not None:
+    #     for path in args.All:
+    #         process_dir(path, to_scan)
+    #
+    # if args.Recursive is not None:
+    #     for path in args.Recursive:
+    #         recursive_process(path, to_scan)
 
     if args.String is not None:
         # print("changes:\n")
